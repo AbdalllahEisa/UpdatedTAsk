@@ -92,13 +92,18 @@ public class RestControllerApi {
         double min = 0;
         LocalDateTime timeing = LocalDateTime.now();
         long sec = 60 - timeing.getSecond();
-        HashMap<String, Double> y = new HashMap<>();
 
-        Set<Double> mapSet=new HashSet<>();
-for(body t: getBodyJson(BodyDto)) {
-    
-    mapSet.add(t.getPrice());
-}
+
+        HashMap<Integer, body> y = new HashMap<>();
+
+
+        body b1= getBodyJson(BodyDto)[0];
+
+        body b2= getBodyJson(BodyDto)[1];
+
+        y.put(1,b1);
+        y.put(2,b2);
+
 
 
 
@@ -111,24 +116,28 @@ for(body t: getBodyJson(BodyDto)) {
 
 
 
-            count++;
 
+if( y.get(1).getPrice()>y.get(2).getPrice()) {
+    max=y.get(1).getPrice();
+    min=y.get(2).getPrice();
+        }else{
 
+    max=y.get(2).getPrice();
+    min=y.get(1).getPrice();
 
+}
+            for (Map.Entry<Integer, body> set :
+                    y.entrySet()) {
+          count++;
 
-
-
-
-            max =Collections.max(mapSet);
-            min=Collections.min(mapSet);
-            Iterator<Double> looping = mapSet.iterator();
-
-            count=   mapSet.stream().count();
-
-
-            while(looping.hasNext()) {
-                avg = looping.next() /count;
             }
+
+
+avg=(y.get(1).getPrice()+y.get(2).getPrice())/count;
+
+
+
+
         }
 
 
@@ -140,12 +149,13 @@ for(body t: getBodyJson(BodyDto)) {
 
     }
 
-    @GetMapping(" /statistics/{instrument_identifier}")
+    @GetMapping("/statistics/{instrument_identifier}")
     @ResponseBody
-    public ResponseEntity<stastics> stastticsidentifier(@PathVariable("instrument_identifier") String instrument) throws IOException {
+    public ResponseEntity<body> stastticsidentifier(@PathVariable("instrument_identifier") int instrument) throws IOException {
         String BodyDto = "[{\n" +
                 "\n" +
                 "\n" +
+                "  \"id\": 1,\n" +
                 "  \"instrument\": \"EURUSD\",\n" +
                 "  \"price\": 1.333,\n" +
                 "  \"timestamp\": 1478192204000\n" +
@@ -154,13 +164,14 @@ for(body t: getBodyJson(BodyDto)) {
                 "},{\n" +
                 "\n" +
                 "\n" +
+                "  \"id\": 2,\n" +
                 "  \"instrument\": \"EURUSD\",\n" +
                 "  \"price\": 2.333,\n" +
                 "  \"timestamp\": 1478192204000\n" +
                 "\n" +
                 "\n" +
                 "}]";
-
+        body b=null;
         long count = 0;
         double avg = 0;
         double u = 0;
@@ -168,16 +179,15 @@ for(body t: getBodyJson(BodyDto)) {
         double min = 0;
         LocalDateTime timeing = LocalDateTime.now();
         long sec = 60 - timeing.getSecond();
-        HashMap<String, Double> y = new HashMap<>();
-        Set<Double> mapSet=new HashSet<>();
+        HashMap<Integer, body> y = new HashMap<>();
 
 
+        body b1= getBodyJson(BodyDto)[0];
 
-        for(body t: getBodyJson(BodyDto)) {
-            mapSet.add(t.getPrice());
-        }
+        body b2= getBodyJson(BodyDto)[1];
 
-
+        y.put(1,b1);
+        y.put(2,b2);
 
         if (sec >= 0) {
 
@@ -185,32 +195,24 @@ for(body t: getBodyJson(BodyDto)) {
 
 
 
-
-
-            count++;
-
+b= y.get(instrument);
 
 
 
 
 
 
-            max =Collections.max(mapSet);
-            min=Collections.min(mapSet);
-            Iterator<Double> looping = mapSet.iterator();
-
-            count=   mapSet.stream().count();
 
 
-            while(looping.hasNext()) {
-                avg = looping.next() /count;
-            }
+
+
+
         }
 
 
 
 
-        return new ResponseEntity<stastics>(new stastics(count, avg, max, min), HttpStatus.OK);
+        return new ResponseEntity<body>(b, HttpStatus.OK);
 
 
 
