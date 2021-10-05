@@ -17,13 +17,13 @@ public class RestControllerApi {
     private HashMap<Integer,List<body>> getBodyJson() throws IOException {
         String str="2021-10-05 10:30:15";
 
-List<body>gg=new ArrayList<>();
+List<body>bodyList=new ArrayList<>();
         Timestamp time=Timestamp.valueOf(str);
       body b1=  new body(1,time,1.253,"USD");
       body b2= new body(2,time,2.253,"EUR");
-      gg.add(b1);
-      gg.add(b2);
-      m.put(1,gg);
+        bodyList.add(b1);
+        bodyList.add(b2);
+      m.put(1,bodyList);
 
         return m;
     }
@@ -37,7 +37,7 @@ List<body>gg=new ArrayList<>();
         LocalDateTime timeing = LocalDateTime.now();
         long sec = 60 - timeing.getSecond();
 
-        double r = 0;
+
         if (sec >= 0) {
 
 
@@ -87,13 +87,13 @@ List<body>gg=new ArrayList<>();
 
 
 
-List<Double>t= new ArrayList<>();
-t.add(getBodyJson().get(1).get(0).getPrice());
-            t.add(getBodyJson().get(1).get(1).getPrice());
+List<Double>stasticsList= new ArrayList<>();
+            stasticsList.add(getBodyJson().get(1).get(0).getPrice());
+            stasticsList.add(getBodyJson().get(1).get(1).getPrice());
 
-    max=Collections.max(t);
-    min=Collections.min(t);
-count=  t.stream().count();
+    max=Collections.max(stasticsList);
+    min=Collections.min(stasticsList);
+count=  stasticsList.stream().count();
 
 
 
@@ -117,7 +117,7 @@ count=  t.stream().count();
     @ResponseBody
     public ResponseEntity<List<Double>> stastticsidentifier(@PathVariable("instrument_identifier") int instrument) throws IOException {
 
-        List<Double> b=new ArrayList<>();
+        List<Double> priceList=new ArrayList<>();
         long count = 0;
         double avg = 0;
         double u = 0;
@@ -125,14 +125,14 @@ count=  t.stream().count();
         double min = 0;
         LocalDateTime timeing = LocalDateTime.now();
         long sec = 60 - timeing.getSecond();
-        HashMap<Integer, body> y = new HashMap<>();
+        HashMap<Integer, body> mapBody = new HashMap<>();
 
 
 
-y.put(1,getBodyDto().getBody().get(0));
+mapBody.put(1,getBodyDto().getBody().get(0));
 
 
-        y.put(2,getBodyDto().getBody().get(1));
+        mapBody.put(2,getBodyDto().getBody().get(1));
 
         if (sec >= 0) {
 
@@ -140,7 +140,7 @@ y.put(1,getBodyDto().getBody().get(0));
 
 
 
-b.add( y.get(instrument).getPrice());
+priceList.add( mapBody.get(instrument).getPrice());
 
 
 
@@ -157,7 +157,7 @@ b.add( y.get(instrument).getPrice());
 
 
 
-        return new ResponseEntity<List<Double>>(b, HttpStatus.OK);
+        return new ResponseEntity<List<Double>>(priceList, HttpStatus.OK);
 
 
 
