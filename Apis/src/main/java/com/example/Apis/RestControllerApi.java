@@ -1,48 +1,39 @@
 package com.example.Apis;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
 public class RestControllerApi {
-    private body[] getBodyJson(String jsonBodyDTO) throws IOException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        return new ObjectMapper()
-                .setDateFormat(simpleDateFormat)
-                .readValue(jsonBodyDTO, body[].class);
+
+    HashMap<Integer,List<body>> m = new HashMap<>();
+    private HashMap<Integer,List<body>> getBodyJson() throws IOException {
+        String str="2021-10-05 10:30:15";
+
+List<body>gg=new ArrayList<>();
+        Timestamp time=Timestamp.valueOf(str);
+      body b1=  new body(1,time,1.253,"USD");
+      body b2= new body(2,time,2.253,"EUR");
+      gg.add(b1);
+      gg.add(b2);
+      m.put(1,gg);
+
+        return m;
     }
+
 
     @RequestMapping("/ticks")
     @Cacheable(value = "ticks")
 
-    public Object getBodyDto()
+    public ResponseEntity<List<body>> getBodyDto()
             throws IOException {
-        String BodyDto = "[{\n" +
-                "\n" +
-                "\n" +
-                "  \"instrument\": \"EURUSD\",\n" +
-                "  \"price\": 1.333,\n" +
-                "  \"timestamp\": 1478192204000\n" +
-                "\n" +
-                "\n" +
-                "},{\n" +
-                "\n" +
-                "\n" +
-                "  \"instrument\": \"EURUSD\",\n" +
-                "  \"price\": 2.333,\n" +
-                "  \"timestamp\": 1478192204000\n" +
-                "\n" +
-                "\n" +
-                "}]";
-
         LocalDateTime timeing = LocalDateTime.now();
         long sec = 60 - timeing.getSecond();
 
@@ -50,11 +41,12 @@ public class RestControllerApi {
         if (sec >= 0) {
 
 
-            return getBodyJson(BodyDto)[0].getPrice();
+           return new ResponseEntity<List<body>>(getBodyJson().get(1),HttpStatus.ACCEPTED);
         } else {
 
 
-            return new ResponseEntity<body>(HttpStatus.UNPROCESSABLE_ENTITY);
+
+            return new ResponseEntity<List<body>>(HttpStatus.UNPROCESSABLE_ENTITY);
 
 
         }
@@ -63,27 +55,10 @@ public class RestControllerApi {
 
 
     @GetMapping("/statistics")
-
     @ResponseBody
     @Cacheable(value = "statistics")
     public ResponseEntity<stastics> stasttics() throws IOException {
-        String BodyDto = "[{\n" +
-                "\n" +
-                "\n" +
-                "  \"instrument\": \"EURUSD\",\n" +
-                "  \"price\": 1.333,\n" +
-                "  \"timestamp\": 1478192204000\n" +
-                "\n" +
-                "\n" +
-                "},{\n" +
-                "\n" +
-                "\n" +
-                "  \"instrument\": \"EURUSD\",\n" +
-                "  \"price\": 2.333,\n" +
-                "  \"timestamp\": 1478192204000\n" +
-                "\n" +
-                "\n" +
-                "}]";
+
         double r = 0;
         long count = 0;
         double avg = 0;
@@ -94,15 +69,12 @@ public class RestControllerApi {
         long sec = 60 - timeing.getSecond();
 
 
-        HashMap<Integer, body> y = new HashMap<>();
 
 
-        body b1= getBodyJson(BodyDto)[0];
 
-        body b2= getBodyJson(BodyDto)[1];
 
-        y.put(1,b1);
-        y.put(2,b2);
+
+
 
 
 
@@ -115,25 +87,17 @@ public class RestControllerApi {
 
 
 
+List<Double>t= new ArrayList<>();
+t.add(getBodyJson().get(1).get(0).getPrice());
+            t.add(getBodyJson().get(1).get(1).getPrice());
+
+    max=Collections.max(t);
+    min=Collections.min(t);
+count=  t.stream().count();
 
 
-if( y.get(1).getPrice()>y.get(2).getPrice()) {
-    max=y.get(1).getPrice();
-    min=y.get(2).getPrice();
-        }else{
 
-    max=y.get(2).getPrice();
-    min=y.get(1).getPrice();
-
-}
-            for (Map.Entry<Integer, body> set :
-                    y.entrySet()) {
-          count++;
-
-            }
-
-
-avg=(y.get(1).getPrice()+y.get(2).getPrice())/count;
+            avg=(getBodyJson().get(1).get(0).getPrice()+getBodyJson().get(1).get(1).getPrice())/count;
 
 
 
@@ -151,27 +115,9 @@ avg=(y.get(1).getPrice()+y.get(2).getPrice())/count;
 
     @GetMapping("/statistics/{instrument_identifier}")
     @ResponseBody
-    public ResponseEntity<body> stastticsidentifier(@PathVariable("instrument_identifier") int instrument) throws IOException {
-        String BodyDto = "[{\n" +
-                "\n" +
-                "\n" +
-                "  \"id\": 1,\n" +
-                "  \"instrument\": \"EURUSD\",\n" +
-                "  \"price\": 1.333,\n" +
-                "  \"timestamp\": 1478192204000\n" +
-                "\n" +
-                "\n" +
-                "},{\n" +
-                "\n" +
-                "\n" +
-                "  \"id\": 2,\n" +
-                "  \"instrument\": \"EURUSD\",\n" +
-                "  \"price\": 2.333,\n" +
-                "  \"timestamp\": 1478192204000\n" +
-                "\n" +
-                "\n" +
-                "}]";
-        body b=null;
+    public ResponseEntity<List<Double>> stastticsidentifier(@PathVariable("instrument_identifier") int instrument) throws IOException {
+
+        List<Double> b=new ArrayList<>();
         long count = 0;
         double avg = 0;
         double u = 0;
@@ -182,12 +128,11 @@ avg=(y.get(1).getPrice()+y.get(2).getPrice())/count;
         HashMap<Integer, body> y = new HashMap<>();
 
 
-        body b1= getBodyJson(BodyDto)[0];
 
-        body b2= getBodyJson(BodyDto)[1];
+y.put(1,getBodyDto().getBody().get(0));
 
-        y.put(1,b1);
-        y.put(2,b2);
+
+        y.put(2,getBodyDto().getBody().get(1));
 
         if (sec >= 0) {
 
@@ -195,7 +140,7 @@ avg=(y.get(1).getPrice()+y.get(2).getPrice())/count;
 
 
 
-b= y.get(instrument);
+b.add( y.get(instrument).getPrice());
 
 
 
@@ -212,13 +157,17 @@ b= y.get(instrument);
 
 
 
-        return new ResponseEntity<body>(b, HttpStatus.OK);
+        return new ResponseEntity<List<Double>>(b, HttpStatus.OK);
 
 
 
     }
 
 }
+
+
+
+
 
 
 
