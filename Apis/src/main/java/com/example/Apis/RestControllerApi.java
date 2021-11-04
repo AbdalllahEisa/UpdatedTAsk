@@ -15,9 +15,9 @@ public class RestControllerApi {
 
     HashMap<Integer,List<body>> m = new HashMap<>();
     private HashMap<Integer,List<body>> getBodyJson() throws IOException {
-        String str="2021-10-05 10:30:15";
+       String Testtime="04-11-2021 06:55:33";
 
-List<body>bodyList=new ArrayList<>();
+     List<body>bodyList=new ArrayList<>();
         Timestamp time=Timestamp.valueOf(str);
       body b1=  new body(1,time,1.253,"USD");
       body b2= new body(2,time,2.253,"EUR");
@@ -34,7 +34,7 @@ List<body>bodyList=new ArrayList<>();
 
     public ResponseEntity<List<body>> getBodyDto()
             throws IOException {
-        LocalDateTime timeing = LocalDateTime.now();
+        LocalDateTime timing = LocalDateTime.now();
         long sec = 60 - timeing.getSecond();
 
 
@@ -59,53 +59,31 @@ List<body>bodyList=new ArrayList<>();
     @Cacheable(value = "statistics")
     public ResponseEntity<stastics> stasttics() throws IOException {
 
-        double r = 0;
+        
         long count = 0;
         double avg = 0;
-        double u = 0;
+        
         double max = 0;
         double min = 0;
         LocalDateTime timeing = LocalDateTime.now();
         long sec = 60 - timeing.getSecond();
 
 
-
-
-
-
-
-
-
-
-
-
-
         if (sec >= 0) {
 
-
-
-
-
-
-List<Double>stasticsList= new ArrayList<>();
+            List<Double>stasticsList= new ArrayList<>();
             stasticsList.add(getBodyJson().get(1).get(0).getPrice());
             stasticsList.add(getBodyJson().get(1).get(1).getPrice());
 
-    max=Collections.max(stasticsList);
-    min=Collections.min(stasticsList);
-count=  stasticsList.stream().count();
-
-
-
-            avg=(getBodyJson().get(1).get(0).getPrice()+getBodyJson().get(1).get(1).getPrice())/count;
+            max=Collections.max(stasticsList);
+            min=Collections.min(stasticsList);
+            count=  stasticsList.stream().count();
+           avg=(getBodyJson().get(1).get(0).getPrice()+getBodyJson().get(1).get(1).getPrice())/count;
 
 
 
 
         }
-
-
-
 
         return new ResponseEntity<stastics>(new stastics(count, avg, max, min), HttpStatus.OK);
 
@@ -120,7 +98,6 @@ count=  stasticsList.stream().count();
         List<Double> priceList=new ArrayList<>();
         long count = 0;
         double avg = 0;
-        double u = 0;
         double max = 0;
         double min = 0;
         LocalDateTime timeing = LocalDateTime.now();
@@ -136,25 +113,11 @@ mapBody.put(1,getBodyDto().getBody().get(0));
 
         if (sec >= 0) {
 
-
-
-
-
 priceList.add( mapBody.get(instrument).getPrice());
 
 
 
-
-
-
-
-
-
-
-
         }
-
-
 
 
         return new ResponseEntity<List<Double>>(priceList, HttpStatus.OK);
