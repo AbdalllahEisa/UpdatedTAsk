@@ -96,10 +96,7 @@ public class RestControllerApi {
     public ResponseEntity<List<Double>> stastticsidentifier(@PathVariable("instrument_identifier") int instrument) throws IOException {
 
         List<Double> priceList=new ArrayList<>();
-        long count = 0;
-        double avg = 0;
-        double max = 0;
-        double min = 0;
+      
         LocalDateTime timeing = LocalDateTime.now();
         long sec = 60 - timeing.getSecond();
         HashMap<Integer, body> mapBody = new HashMap<>();
